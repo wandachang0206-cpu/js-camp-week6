@@ -22,6 +22,9 @@ const ADMIN_TOKEN = process.env.API_KEY;
  * @returns {Promise<Array>} - 回傳 products 陣列
  */
 async function getProducts() {
+	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/products`)
+    const data = await response.json();
+	return data.products;
 	// 請實作此函式
 	// 提示：
 	// 1. 使用 fetch() 發送 GET 請求
@@ -34,21 +37,43 @@ async function getProducts() {
  * @returns {Promise<Object>} - 回傳 { carts: [...], total: 數字, finalTotal: 數字 }
  */
 async function getCart() {
-	// 請實作此函式
+	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`)
+	const data = await response.json();
+	return { carts: data.carts, total: data.total, finalTotal: data.finalTotal };
 }
+	// 請實作此函式
 
 /**
  * 3. 錯誤處理：當 API 回傳錯誤時，回傳錯誤訊息
  * @returns {Promise<Object>} - 回傳 { success: boolean, data?: [...], error?: string }
  */
 async function getProductsSafe() {
-	// 請實作此函式
-	// 提示：
-	// 1. 加上 try-catch 處理錯誤
-	// 2. 檢查 response.ok 判斷是否成功
-	// 3. 成功回傳 { success: true, data: [...] }
-	// 4. 失敗回傳 { success: false, error: '錯誤訊息' }
+	 try {
+    const response = await fetch(
+      `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/products`,
+    )
+    const data = await response.json()
+
+    // 檢查 HTTP 狀態碼
+    if (!response.ok) {
+      // 表示狀態碼不是 2xx
+      return {
+        success: false,
+        error: data.message || '取得產品失敗',
+      }
+    }
+    return {
+      success: true,
+      data: data.products,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    }
+  }
 }
+
 
 // ========================================
 // 任務二：POST 請求 - 購物車操作
@@ -67,6 +92,18 @@ async function addToCart(productId, quantity) {
 	// 2. body 格式：{ data: { productId: "xxx", quantity: 1 } }
 	// 3. 記得設定 headers: { 'Content-Type': 'application/json' }
 	// 4. body 要用 JSON.stringify() 轉換
+	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`, {
+		method: 'POST',
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify({
+			data: {
+				productId: productId,
+				quantity: quantity
+			}
+		})
+	});
+	const data = await response.json();
+	return data;
 }
 
 /**
@@ -80,6 +117,18 @@ async function updateCartItem(cartId, quantity) {
 	// 提示：
 	// 1. 發送 PATCH 請求
 	// 2. body 格式：{ data: { id: "購物車ID", quantity: 數量 } }
+	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`, {
+		method: 'PATCH',
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify({
+			data: {
+				id: cartId,
+				quantity
+			}
+		})
+	});
+	const data = await response.json();
+	return data;
 }
 
 /**
@@ -90,6 +139,11 @@ async function updateCartItem(cartId, quantity) {
 async function removeCartItem(cartId) {
 	// 請實作此函式
 	// 提示：發送 DELETE 請求到 /carts/{id}
+	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts/${cartId}`, {
+		method: 'DELETE',
+	});
+	const data = await response.json();
+	return data;
 }
 
 /**
@@ -99,6 +153,11 @@ async function removeCartItem(cartId) {
 async function clearCart() {
 	// 請實作此函式
 	// 提示：發送 DELETE 請求到 /carts
+	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`, {
+		method: 'DELETE',
+	});
+	const data = await response.json();
+	return data;
 }
 
 // ========================================
@@ -110,12 +169,21 @@ async function clearCart() {
 
 1. HTTP 狀態碼的分類（1xx, 2xx, 3xx, 4xx, 5xx 各代表什麼）
    答：
-
+  - 1xx：資訊回應:請求被伺服器接收，正在處理。
+  - 2xx：成功回應:請求成功被伺服器接收。
+  - 3xx:重新導向:客戶端額外操作才能完成請求。
+  - 4xx:用戶端錯誤:請求有語法錯誤或無法完成。
+  - 5xx:伺服器錯誤:伺服器在處理請求時發生錯誤。
 2. GET、POST、PATCH、PUT、DELETE 的差異
    答：
-
+ GET：取得資料
+   POST：建立資料
+   PATCH：部分修改資料
+   PUT：替換整筆資料
+   DELETE：刪除資料
 3. 什麼是 RESTful API？
-   答：
+   答： 答：API的設計，它利用 HTTP 方法（GET、POST、PUT、PATCH、DELETE）來操作資源。
+
 
 
 */
