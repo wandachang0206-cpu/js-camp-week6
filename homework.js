@@ -86,6 +86,19 @@ async function getProductsSafe() {
  * @returns {Promise<Object>} - 回傳更新後的購物車資料
  */
 async function addToCart(productId, quantity) {
+	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`, {
+		method: 'POST',
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify({
+			data: {
+				productId: productId,
+				quantity: quantity
+			}
+		})
+	});
+	const data = await response.json();
+	return data;
+
 	// 請實作此函式
 	// 提示：
 	// 1. 發送 POST 請求
@@ -113,6 +126,20 @@ async function addToCart(productId, quantity) {
  * @returns {Promise<Object>} - 回傳更新後的購物車資料
  */
 async function updateCartItem(cartId, quantity) {
+	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`, {
+		method: 'PATCH',
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify({
+			data: {
+				id: cartId,
+				quantity
+			}
+		})
+	});
+	const data = await response.json();
+	return data;
+
+
 	// 請實作此函式
 	// 提示：
 	// 1. 發送 PATCH 請求
@@ -137,6 +164,11 @@ async function updateCartItem(cartId, quantity) {
  * @returns {Promise<Object>} - 回傳更新後的購物車資料
  */
 async function removeCartItem(cartId) {
+	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts/${cartId}`, {
+		method: 'DELETE',
+	});
+	const data = await response.json();
+	return data;
 	// 請實作此函式
 	// 提示：發送 DELETE 請求到 /carts/{id}
 	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts/${cartId}`, {
@@ -151,6 +183,11 @@ async function removeCartItem(cartId) {
  * @returns {Promise<Object>} - 回傳清空後的購物車資料
  */
 async function clearCart() {
+	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`, {
+		method: 'DELETE',
+	});
+	const data = await response.json();
+	return data;
 	// 請實作此函式
 	// 提示：發送 DELETE 請求到 /carts
 	const response = await fetch(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`, {
@@ -176,14 +213,22 @@ async function clearCart() {
   - 5xx:伺服器錯誤:伺服器在處理請求時發生錯誤。
 2. GET、POST、PATCH、PUT、DELETE 的差異
    答：
+<<<<<<< HEAD
  GET：取得資料
+=======
+   GET：取得資料
+>>>>>>> a61319d7517efb2ffe8f27a93cd95f30feb0a2b7
    POST：建立資料
    PATCH：部分修改資料
    PUT：替換整筆資料
    DELETE：刪除資料
 3. 什麼是 RESTful API？
+<<<<<<< HEAD
    答： 答：API的設計，它利用 HTTP 方法（GET、POST、PUT、PATCH、DELETE）來操作資源。
 
+=======
+   答：API的設計，它利用 HTTP 方法（GET、POST、PUT、PATCH、DELETE）來操作資源。
+>>>>>>> a61319d7517efb2ffe8f27a93cd95f30feb0a2b7
 
 
 */
